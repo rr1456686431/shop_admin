@@ -1,0 +1,10 @@
+.nav {
+  height: 50px;
+  background: #d4dae0;
+  line-height: 50px;
+  padding: 0 30px;
+}
+
+.add-button {
+  margin: 0 20px;
+}

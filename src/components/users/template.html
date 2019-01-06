@@ -1,0 +1,82 @@
+<div>
+  <!-- 面包屑导航 -->
+  <el-breadcrumb separator-class="el-icon-arrow-right" class="nav">
+    <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+    <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+  </el-breadcrumb>
+  <!-- 输入框 -->
+  <!-- gutter="20" 设置两列之间的间隔 -->
+  <div class="el-col el-col-8">
+    <el-input placeholder="请输入搜索内容" v-model="searchText" class="input-with-select">
+      <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+    </el-input>
+  </div>
+  <!-- 按钮 -->
+  <el-button type="success" class="el-col el-col-2 add-button" @click="showUserAddDialog" plain>添加用户</el-button>
+  <!-- 列表 -->
+  <el-table :data="userList" style="width: 100%">
+    <el-table-column prop="username" label="姓名" width="150">
+    </el-table-column>
+    <el-table-column prop="email" label="邮箱" width="200">
+    </el-table-column>
+    <el-table-column prop="mobile" label="电话" width="200">
+    </el-table-column>
+    <el-table-column label="用户状态" data-state="mg_state" width="200">
+      <!--
+          开关 ：
+            v-model 用来实现数据双向绑定的
+            scope.row 表示当前行数据
+            mg_state 就是当前用户的状态
+      -->
+      <template slot-scope="scope">
+        <el-switch v-model="scope.row.mg_state" @change="changeUserState(scope.row)"></el-switch>
+      </template>
+    </el-table-column>
+    <!-- 操作  circle:圆形-->
+    <el-table-column label="操作">
+      <!-- 这个是Vue中作用域插槽，可以通过scope.row 来获取到当前行的数据 -->
+      <template slot-scope="scope">
+        <!-- 注册编辑事件 -->
+        <el-button size="mini" type="primary" icon="el-icon-edit" plain @click="handleEdit( scope.row)">
+        </el-button>
+        <!-- 注册删除事件 -->
+        <el-button size="mini" type="danger" icon="el-icon-delete" plain @click="handleDelete(scope.row)"></el-button>
+        <el-button type="success" icon="el-icon-check" size="mini" plain>分配角色</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+  <!-- 分页 -->
+  <!-- 注册点击翻页事件 -->
+  <el-pagination background layout="prev, pager, next" :total="total" :page-size="pagesize" :current-page="pagenum"
+    @current-change="changePage">
+  </el-pagination>
+
+  <!-- 添加用户对话框 -->
+
+  <el-dialog title="添加用户" :visible.sync="dialogFormVisible" @close="hideUserAddDialog">
+    <!--
+      表单验证rules是添加在form里的
+      在label后面添加prop=""
+     -->
+    <el-form :model="userAddForm" :rules="rules" label-width="100px" ref="userAddFormRef">
+      <el-form-item label="用户名" ref="ruleForm" prop="username">
+        <el-input v-model="userAddForm.username" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" ref="ruleForm" prop="password">
+        <el-input v-model="userAddForm.password" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="邮箱" ref="ruleForm" prop="email">
+        <el-input v-model="userAddForm.email" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="手机" ref="ruleForm" prop="mobile">
+        <el-input v-model="userAddForm.mobile" autocomplete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <!-- 具名插槽 -->
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="addUser">确 定</el-button>
+    </div>
+  </el-dialog>
+</div>
